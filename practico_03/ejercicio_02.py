@@ -31,4 +31,4 @@ def pruebas():
     assert id_marcela > id_juan
 
 if __name__ == '__main__':
-pruebas()
+    pruebas()

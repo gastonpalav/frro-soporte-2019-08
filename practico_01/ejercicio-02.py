@@ -4,4 +4,3 @@ z = int(input('Ingrese tercer numero'))
 numeroMaximo = max(x,y,z)
 
 print('El numero maximo es : {}' .format(numeroMaximo))
-

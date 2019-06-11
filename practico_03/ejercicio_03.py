@@ -28,4 +28,4 @@ def pruebas():
     assert borrar_persona(12345) is False
 
 if __name__ == '__main__':
-pruebas()
+    pruebas()
