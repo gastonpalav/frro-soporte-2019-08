@@ -38,4 +38,4 @@ def pruebas():
     assert buscar_persona(12345) is False
 
 if __name__ == '__main__':
-    pruebas()
+pruebas()
