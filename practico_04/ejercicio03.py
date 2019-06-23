@@ -22,6 +22,6 @@ class Aplicacion(ttk.Frame):
 
 if __name__=='__main__':
     main_window = tk.Tk()
-    res = '400x230+600+200'
+    res = '400x250+600+200'
     app = Aplicacion(main_window, res)
     app.mainloop()

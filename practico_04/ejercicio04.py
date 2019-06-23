@@ -18,7 +18,7 @@ class CrearMarco(tk.Frame):
             cp = tk.StringVar()
             alt_window = tk.Toplevel(root)
             alt_window.title("Agregar nueva ciudad")
-            alt_window.geometry('345x170+625+400')
+            alt_window.geometry('350x200+600+400')
             alt_window.resizable(0, 0)
             lblCiudad = tk.Label(alt_window, text="Nombre de la ciudad")
             lblCiudad.grid(row=0, columnspan=2, padx=20, pady=(5, 0))
@@ -28,8 +28,8 @@ class CrearMarco(tk.Frame):
             lblCP.grid(row=2, columnspan=2, padx=20, pady=(5, 0))
             entryCP = tk.Entry(alt_window, textvariable=cp, width=50)
             entryCP.grid(row=3, columnspan=2, padx=20, pady=(0, 5))
-            lbl = tk.Label(alt_window, text="")
-            lbl.grid(row=4, columnspan=2, padx=20, pady=5)
+            lblValida = tk.Label(alt_window, text="")
+            lblValida.grid(row=4, columnspan=2, padx=20, pady=5)
 
             def agregar(ciudad, cp):
                 if ciudad.get() != "" and cp.get() != "":
@@ -37,15 +37,15 @@ class CrearMarco(tk.Frame):
                     app.treeview.grid()
                     alt_window.destroy()
                 else:
-                    lbl = tk.Label(alt_window, text="Primero ingrese la ciudad con su Código Postal.", font=font.Font(size=10, weight="bold"))
-                    lbl.grid(row=4, columnspan=3, padx=10, pady=5)
+                    lblValida = tk.Label(alt_window, text="Ingrese la ciudad con su Código Postal.", font=font.Font(size=10, weight="bold"))
+                    lblValida.grid(row=4, columnspan=3, padx=10, pady=5)
 
             btnAceptar = tk.Button(alt_window, text='Aceptar', command=lambda: agregar(ciudad, cp))
             btnAceptar.grid(row=5, column=0, padx=10, pady=5)
             btnCancelar = tk.Button(alt_window, text='Cancelar', command=alt_window.destroy)
             btnCancelar.grid(row=5, column=1, padx=10, pady=5)
 
-        self.btnAgregarCiudad = tk.Button(self, text='Agregar ciudad...', command=agregarCiudad)
+        self.btnAgregarCiudad = tk.Button(self, text='Agregar ciudad', command=agregarCiudad)
 
         def borrarCiudad():
             seleccionarCiudad = app.treeview.selection()
@@ -55,9 +55,9 @@ class CrearMarco(tk.Frame):
                 self.lbl['text'] = ""
                 alt_window = tk.Toplevel(root)
                 alt_window.title("Borrar ciudad")
-                alt_window.geometry('250x80+625+400')
+                alt_window.geometry('200x80+625+400')
                 alt_window.resizable(0, 0)
-                lblCiudad = tk.Label(alt_window, text="¿Desea borrar la ciudad de "+nombre+"?")
+                lblCiudad = tk.Label(alt_window, text="¿Desea borrar "+nombre+"?")
                 lblCiudad.grid(row=0, columnspan=2, padx=20, pady=(5, 0))
 
                 def borrar(ciudad):
@@ -70,7 +70,7 @@ class CrearMarco(tk.Frame):
                 btnCancelar = tk.Button(alt_window, text='Cancelar', command=alt_window.destroy)
                 btnCancelar.grid(row=5, column=1, padx=10, pady=5)
             else:
-                self.lbl['text'] = "Selecciona una ciudad"
+                self.lbl['text'] = "Debe seleccionar una ciudad"
 
         self.btnEliminarCiudad = tk.Button(self, text='Borrar ciudad', command=borrarCiudad)
 
@@ -94,8 +94,8 @@ class CrearMarco(tk.Frame):
                 lblCP.grid(row=2, columnspan=2, padx=20, pady=(5, 0))
                 entryCP = tk.Entry(alt_window, textvariable=cp, width=50)
                 entryCP.grid(row=3, columnspan=2, padx=20, pady=(0, 5))
-                lbl = tk.Label(alt_window, text="")
-                lbl.grid(row=4, columnspan=2, padx=20, pady=5)
+                lblValida = tk.Label(alt_window, text="")
+                lblValida.grid(row=4, columnspan=2, padx=20, pady=5)
 
                 def modificar(elemento, ciudad, cp):
                     if ciudad.get() != "" and cp.get() != "":
@@ -103,15 +103,15 @@ class CrearMarco(tk.Frame):
                         app.treeview.grid()
                         alt_window.destroy()
                     else:
-                        lbl = tk.Label(alt_window, text="Primero ingrese la ciudad con su Código Postal.", font=font.Font(size=10, weight="bold"))
-                        lbl.grid(row=4, columnspan=2, padx=10, pady=5)
+                        lblValida = tk.Label(alt_window, text="Ingrese la ciudad con su Código Postal.", font=font.Font(size=10, weight="bold"))
+                        lblValida.grid(row=4, columnspan=2, padx=10, pady=5)
 
                 btnAceptar = tk.Button(alt_window, text='Aceptar', command=lambda: modificar(seleccion, ciudad, cp))
                 btnAceptar.grid(row=5, column=0, padx=10, pady=5)
                 btnCancelar = tk.Button(alt_window, text='Cancelar', command=alt_window.destroy)
                 btnCancelar.grid(row=5, column=1, padx=10, pady=5)
             else:
-                self.lbl['text'] = "Selecciona una ciudad"
+                self.lbl['text'] = "Debe seleccionar una ciudad"
 
         self.btnModificarCiudad = tk.Button(self, text='Modificar ciudad', command=modificarCiudad)
         self.btnSalir = tk.Button(self, text="Salir", width=10, command=self.padre.destroy)  
