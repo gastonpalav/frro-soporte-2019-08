@@ -5,14 +5,20 @@
 # - apellido: string (longitud 250)
 
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, String, Integer, create_engine
+from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
 
-
 class Socio(Base):
     __tablename__ = 'socios'
+    id = Column(Integer, primary_key=True, autoincrement=True, unique=True)
+    dni = Column(Integer, unique=True)
+    nombre = Column(String(250))
+    apellido = Column(String(250))
 
-    # id = Column(...)
-    # dni = Column(...)
-    # nombre = Column(...)
-    # apellido = Column(...)
+#def crearModelo():
+# Base.metadata.create_all(conexion())
+#print('Creacion de modelo con exito')
+
+#crearModelo()
