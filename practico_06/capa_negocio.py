@@ -4,15 +4,15 @@ from practico_05.ejercicio_01 import Socio
 from practico_05.ejercicio_02 import DatosSocio
 
 
-class DniRepetido(Exception):
+class DniRepetido(RuntimeError):
     pass
 
 
-class LongitudInvalida(Exception):
+class LongitudInvalida(RuntimeError):
     pass
 
 
-class MaximoAlcanzado(Exception):
+class MaximoAlcanzado(RuntimeError):
     pass
 
 
@@ -31,7 +31,9 @@ class NegocioSocio(object):
         Devuelve None si no encuentra nada.
         :rtype: Socio
         """
-        return
+        s = DatosSocio.buscar(id_socio)
+
+        return s
 
     def buscar_dni(self, dni_socio):
         """
@@ -39,14 +41,18 @@ class NegocioSocio(object):
         Devuelve None si no encuentra nada.
         :rtype: Socio
         """
-        return
+        s = DatosSocio.buscar_dni(dni_socio)
+        return s 
 
     def todos(self):
         """
         Devuelve listado de todos los socios.
         :rtype: list
         """
-        return []
+        listSocio = list ()
+        listSocio = DatosSocio.todos()
+
+        return listSocio
 
     def alta(self, socio):
         """
@@ -57,8 +63,20 @@ class NegocioSocio(object):
         :type socio: Socio
         :rtype: bool
         """
-        return False
-
+        try:
+            s = self.regla_1(socio)
+            if s:
+                if regla_2(socio):
+                    if regla_3(socio):
+                        return True
+                    else:
+                        raise MaximoAlcanzado("Maximo numero de socios alcanzado")  
+                else:
+                    raise LongitudInvalida("Longitud del DNI invalida")
+            else:
+                raise DniRepetido("DNI REPETIDO")
+            
+            
     def baja(self, id_socio):
         """
         Borra el socio especificado por el id.
