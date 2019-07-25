@@ -4,16 +4,18 @@ from practico_05.ejercicio_01 import Socio
 from practico_05.ejercicio_02 import DatosSocio
 
 
-class DniRepetido(RuntimeError):
-    pass
+class DniRepetido(Exception):
+    def __init__(self, *args):
+        return super(DniRepetido).__init__(*args)
+
+class LongitudInvalida(Exception):
+    def __init__(self, *args):
+        return super(LongitudInvalida).__init__(*args)
 
 
-class LongitudInvalida(RuntimeError):
-    pass
-
-
-class MaximoAlcanzado(RuntimeError):
-    pass
+class MaximoAlcanzado(Exception):
+    def __init__(self, *args):
+        return super().__init__(*args)
 
 
 class NegocioSocio(object):
@@ -31,9 +33,7 @@ class NegocioSocio(object):
         Devuelve None si no encuentra nada.
         :rtype: Socio
         """
-        s = DatosSocio.buscar(id_socio)
-
-        return s
+        return self.datos.buscar(id_socio) 
 
     def buscar_dni(self, dni_socio):
         """
@@ -41,18 +41,15 @@ class NegocioSocio(object):
         Devuelve None si no encuentra nada.
         :rtype: Socio
         """
-        s = DatosSocio.buscar_dni(dni_socio)
-        return s 
+        return self.datos.buscar_dni(dni_socio) 
 
     def todos(self):
         """
         Devuelve listado de todos los socios.
         :rtype: list
         """
-        listSocio = list ()
-        listSocio = DatosSocio.todos()
 
-        return listSocio
+        return self.datos.todos()
 
     def alta(self, socio):
         """
@@ -64,37 +61,36 @@ class NegocioSocio(object):
         :rtype: bool
         """
         try:
-            s = self.regla_1(socio)
-            if s:
-                if regla_2(socio):
-                    if regla_3(socio):
-                        return True
-                    else:
-                        raise MaximoAlcanzado("Maximo numero de socios alcanzado")  
-                else:
-                    raise LongitudInvalida("Longitud del DNI invalida")
-            else:
-                raise DniRepetido("DNI REPETIDO")
+            if self.regla_1(socio) and self.regla_2(socio) and self.regla_3():
+                return True
+        except Exception as ex:
+            raise ex  
             
-            
+   
     def baja(self, id_socio):
         """
         Borra el socio especificado por el id.
         Devuelve True si el borrado fue exitoso.
         :rtype: bool
         """
-        return False
+
+        return self.datos.baja(id_socio)
 
     def modificacion(self, socio):
         """
         Modifica un socio.
         Se debe validar la regla 2 primero.
         Si no valida, levantar la excepcion correspondiente.
-        Devuelve True si la modificacion fue exitosa.
+        Devuelve True spassi la modificacion fue exitosa.
         :type socio: Socio
         :rtype: bool
         """
-        return False
+        
+        try:
+            if self.regla_2(socio):
+                return self.datos.modificacion(socio)
+        except Exception as ex:
+            raise ex
 
     def regla_1(self, socio):
         """
@@ -103,7 +99,11 @@ class NegocioSocio(object):
         :raise: DniRepetido
         :return: bool
         """
-        return False
+        s = self.datos.buscar_dni(socio.dni)
+        if not s :
+            return True
+        raise DniRepetido('El DNI no se puede repetir.')
+        
 
     def regla_2(self, socio):
         """
@@ -112,7 +112,12 @@ class NegocioSocio(object):
         :raise: LongitudInvalida
         :return: bool
         """
-        return False
+
+        if self.MIN_CARACTERES > len(socio.nombre) or len(socio.nombre) > self.MAX_CARACTERES: 
+            raise LongitudInvalida("El nombre no coincide con los parametros de Longitud previstos")
+        if self.MIN_CARACTERES > len(socio.apellido) and len(socio.apellido) > self.MAX_CARACTERES:
+            raise LongitudInvalida("El apellido no coincide con los parametros de Longitud previstos")
+        return True
 
     def regla_3(self):
         """
@@ -120,4 +125,7 @@ class NegocioSocio(object):
         :raise: MaximoAlcanzado
         :return: bool
         """
-        return False
+        
+        if len(self.datos.todos()) < self.MAX_SOCIOS:
+            return True
+        raise MaximoAlcanzado("Se ha alcanzado la cantidad maxima de socios.")
