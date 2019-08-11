@@ -8,6 +8,7 @@ class DniRepetido(Exception):
     def __init__(self, *args):
         return super(DniRepetido).__init__(*args)
 
+
 class LongitudInvalida(Exception):
     def __init__(self, *args):
         return super(LongitudInvalida).__init__(*args)
@@ -19,7 +20,6 @@ class MaximoAlcanzado(Exception):
 
 
 class NegocioSocio(object):
-
     MIN_CARACTERES = 3
     MAX_CARACTERES = 15
     MAX_SOCIOS = 200
@@ -33,7 +33,7 @@ class NegocioSocio(object):
         Devuelve None si no encuentra nada.
         :rtype: Socio
         """
-        return self.datos.buscar(id_socio) 
+        return self.datos.buscar(id_socio)
 
     def buscar_dni(self, dni_socio):
         """
@@ -41,7 +41,7 @@ class NegocioSocio(object):
         Devuelve None si no encuentra nada.
         :rtype: Socio
         """
-        return self.datos.buscar_dni(dni_socio) 
+        return self.datos.buscar_dni(dni_socio)
 
     def todos(self):
         """
@@ -62,11 +62,11 @@ class NegocioSocio(object):
         """
         try:
             if self.regla_1(socio) and self.regla_2(socio) and self.regla_3():
+                self.datos.alta(socio)
                 return True
         except Exception as ex:
-            raise ex  
-            
-   
+            raise ex
+
     def baja(self, id_socio):
         """
         Borra el socio especificado por el id.
@@ -85,10 +85,14 @@ class NegocioSocio(object):
         :type socio: Socio
         :rtype: bool
         """
-        
+
         try:
             if self.regla_2(socio):
-                return self.datos.modificacion(socio)
+                modificoSocio = self.datos.modificacion(socio)
+                if modificoSocio:
+                    return True
+                else:
+                    return False
         except Exception as ex:
             raise ex
 
@@ -100,10 +104,9 @@ class NegocioSocio(object):
         :return: bool
         """
         s = self.datos.buscar_dni(socio.dni)
-        if not s :
+        if not s:
             return True
         raise DniRepetido('El DNI no se puede repetir.')
-        
 
     def regla_2(self, socio):
         """
@@ -113,7 +116,7 @@ class NegocioSocio(object):
         :return: bool
         """
 
-        if self.MIN_CARACTERES > len(socio.nombre) or len(socio.nombre) > self.MAX_CARACTERES: 
+        if self.MIN_CARACTERES > len(socio.nombre) or len(socio.nombre) > self.MAX_CARACTERES:
             raise LongitudInvalida("El nombre no coincide con los parametros de Longitud previstos")
         if self.MIN_CARACTERES > len(socio.apellido) and len(socio.apellido) > self.MAX_CARACTERES:
             raise LongitudInvalida("El apellido no coincide con los parametros de Longitud previstos")
@@ -125,7 +128,7 @@ class NegocioSocio(object):
         :raise: MaximoAlcanzado
         :return: bool
         """
-        
+
         if len(self.datos.todos()) < self.MAX_SOCIOS:
             return True
         raise MaximoAlcanzado("Se ha alcanzado la cantidad maxima de socios.")

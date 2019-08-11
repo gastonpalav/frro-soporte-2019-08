@@ -40,7 +40,7 @@ class TestsNegocio(unittest.TestCase):
 
         # Excepcion manejada , DNI repetido
         repetido = Socio(dni= 38250500 , nombre='Pedro', apellido = 'Nuñez')    
-        self.assertRaises(DniRepetido, self.ns.regla_1,repetido)
+        self.assertRaises(DniRepetido , self.ns.regla_1 , repetido)
 
     def test_regla_2_nombre_menor_3(self):
         # valida regla
@@ -135,7 +135,7 @@ class TestsNegocio(unittest.TestCase):
         socioBuscado = self.ns.buscar_dni(socio.dni)
 
         #postcondiciones - encontre el socio
-        self.assertEqual(socio , socioBuscado)
+        self.assertEqual(socio,socioBuscado)
 
         #doy de baja el socio
         self.ns.baja(socio.id)
@@ -184,6 +184,5 @@ class TestsNegocio(unittest.TestCase):
         socioEncontrado = self.ns.buscar_dni(45612378)
         #compruebo si coincide con la modificacion
         self.assertEqual(socioEncontrado.nombre , "Sebastian")
-        self.assertFalse(socioEncontrado.apellido , "Villa")
-
+        self.assertEqual(socioEncontrado.apellido,"Perez")
 
