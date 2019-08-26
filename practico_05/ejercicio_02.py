@@ -3,7 +3,7 @@
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from ejercicio_01 import Base, Socio
+from practico_05.ejercicio_01 import Base , Socio
 from sqlalchemy import exc
 
 class DatosSocio(object):
@@ -90,12 +90,11 @@ class DatosSocio(object):
         :rtype: Socio
         """
         s= self.buscar(socio.id)
-        if s :
+        if s:
             self.session.query(Socio).filter(Socio.id == socio.id).update({Socio.dni:socio.dni, Socio.nombre:socio.nombre, Socio.apellido:socio.apellido})
             self.session.commit()
             return socio
         else:
-            print("Soc inexistente")
             return False 
         
 
