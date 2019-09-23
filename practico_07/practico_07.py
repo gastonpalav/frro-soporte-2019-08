@@ -27,9 +27,9 @@ class UISocio(Frame):
         self.treeSocios = ttk.Treeview(self, columns=("nombre", "apellido", "dni"))
         self.treeSocios.grid(column=0, row=0)
         self.treeSocios.heading("#0", text="Id")
-        self.treeSocios.heading("nombre", text="Nombre")
-        self.treeSocios.heading("apellido", text="Apellido")
-        self.treeSocios.heading("dni", text="DNI")
+        self.treeSocios.heading("#1", text="Nombre")
+        self.treeSocios.heading("#2", text="Apellido")
+        self.treeSocios.heading("#3", text="DNI")
 
         frameControles = Frame(self)
         frameControles.grid(column=0, row=1, sticky='w')
@@ -56,9 +56,19 @@ class UISocio(Frame):
     def vaciarTreeSocios(self):
         self.treeSocios.delete(*self.treeSocios.get_children())
 
+    def limpiarTreeSocios(self):
+        for i in self.treeSocios.get_children():
+            self.treeSocios.delete(i)
+
     def actualizarTreeSocios(self):
-        self.vaciarTreeSocios()
+        self.limpiarTreeSocios()
         self.llenarTreeSocios()
+
+    def getSocio(root):
+        socio = Socio()
+        socio.nombre = root.txtNombre
+        socio.apellido = root.txtApelido
+        socio.dni = root.txtDni
 
     def altaUI(self):
         alta = Toplevel()
@@ -70,19 +80,22 @@ class UISocio(Frame):
         self.actualizarTreeSocios()
 
     def modificacionUI(self):
-        for socio in self.twSocios.selection():
+        for socio in self.treeSocios.selection():
             s = self.capa_negocio.buscar(self.treeSocios.item(socio)['text'])
             if s is not None:
                 modificacion = Toplevel()
                 HandlerSocio(root=modificacion, form= self , status="M", socio=s)
             else:
-                messagebox.showerror('ERROR' , ' Por favor seleccione un socio')
+                messagebox.showerror('ERROR', ' Por favor seleccione un socio')
 
     def negocioagregar(self, socio):
         return self.capa_negocio.alta(socio)
 
     def negociomodificar(self, socio):
         return self.capa_negocio.modificacion(socio)
+
+    def negociobuscar(self, dni):
+        return self.capa_negocio.buscar_dni(dni)
 
 
 class HandlerSocio:
@@ -93,20 +106,18 @@ class HandlerSocio:
         self.frameDatos = Frame(root)
         self.frameDatos.grid(column=0, row=0)
 
-        self.strID = StringVar()
+
         self.strDNI = StringVar()
         self.strNombre = StringVar()
         self.strApellido = StringVar()
         self.strError = StringVar(value='')
 
-        lblId = ttk.Label(self.frameDatos, text="ID SOCIO")
         lblDni = ttk.Label(self.frameDatos, text="DNI")
         lblNombre = ttk.Label(self.frameDatos, text='Nombre')
         lblApellido = ttk.Label(self.frameDatos, text='Apellido')
         lblErr = ttk.Label(self.frameDatos, textvariable=self.strError)
 
         # ubicamos los labels
-        lblId.grid(row=0, column=0)
         lblDni.grid(row=1, column=0)
         lblNombre.grid(row=2, column=0)
         lblApellido.grid(row=3, column=0)
@@ -114,31 +125,32 @@ class HandlerSocio:
         lblErr.grid(row=4, column=0, padx=8, pady=8, columnspan=2)
 
         # textbox
-        self.txtID = ttk.Entry(self.frameDatos, textvariable=self.strID, state="disabled")
         self.txtDNI = ttk.Entry(self.frameDatos, textvariable=self.strDNI)
         self.txtNombre = ttk.Entry(self.frameDatos, textvariable=self.strNombre)
         self.txtApellido = ttk.Entry(self.frameDatos, textvariable=self.strApellido)
 
         # ubicacion text
-        self.txtID.grid(column=1, row=0)
         self.txtDNI.grid(column=1, row=1)
         self.txtNombre.grid(column=1, row=2)
         self.txtApellido.grid(column=1, row=3)
 
         if self.status == "M":
             self.socio = socio
-            self.txtID.set(self.strID)
-            self.txtDNI.set(self.strDNI)
-            self.txtApellido(self.strApellido)
-            self.txtNombre(self.strNombre)
+            self.strDNI.set(socio.dni)
+            self.strApellido.set(socio.apellido)
+            self.strNombre.set(socio.nombre)
 
-        if self.status == "A":
-            self.strID.set('0')
+
+
+        #if self.status == "A":
+        #self.strID.set('0')
 
         self.frameDatos = Frame(root)
         self.frameDatos.grid(column=0, row=1)
-
-        btnGuardar = ttk.Button(self.frameDatos, text='Guardar', command=self.guardarSocio)
+        if self.status == "A":
+            btnGuardar = ttk.Button(self.frameDatos, text='Guardar', command=lambda: self.guardarSocio())
+        else:
+            btnGuardar = ttk.Button(self.frameDatos, text='Modificar' , command = lambda : self.guardarSocio(socio))
         btnCancel = ttk.Button(self.frameDatos, text='Cancelar', command=root.destroy)
 
         # Posicion botones
@@ -147,34 +159,45 @@ class HandlerSocio:
         btnCancel.grid(row=0, column=1)
 
     # Accion de los botones
-    def guardarSocio(self):
-        socio = Socio()
-        socio.id = self.txtID.get()
-        socio.dni = self.txtDNI.get()
-        socio.nombre = self.txtNombre.get()
-        socio.apellido = self.txtApellido.get()
+    def guardarSocio(self, s=None):
 
         if self.status == 'A':
-            agrega = self.form.negocioagregar(socio)
-            if agrega:
-                messagebox.showinfo('INFORMACION', 'Socio Agregado con exito')
-                self.form.llenarTreeSocios()
-            else:
-                messagebox.showerror('ERROR', 'Error al intentar dar de alta el socio')
+            socio = Socio()
+            socio.dni = self.txtDNI.get()
+            socio.nombre = self.txtNombre.get()
+            socio.apellido = self.txtApellido.get()
+            try:
+                agrega = self.form.negocioagregar(socio)
+                if agrega:
+                    messagebox.showinfo('INFORMACION', 'Socio Agregado con exito')
+                    self.root.destroy()
+                    self.form.actualizarTreeSocios()
+            except Exception as ex:
+                messagebox.showerror('ERROR', 'No se pudo modificar el socio contacte al administrador del sistema')
+                print(ex)
                 self.root.destroy()
                 self.form.actualizarTreeSocios()
         elif self.status == 'M':
-            modifica = self.form.negociomodificar(socio)
-            if modifica:
-                messagebox.showinfo('INFORMACION', 'Socio modificado con exito')
-            else:
-                messagebox.showerror('ERROR', 'Error al intentar dar de alta el socio')
+            socio = self.form.negociobuscar(s.dni)
+            socio.nombre = str(self.strNombre.get())
+            socio.dni = str(self.strDNI.get())
+            socio.apellido = str(self.strApellido.get())
+            try:
+                modifica = self.form.negociomodificar(socio)
+                if modifica:
+                    messagebox.showinfo('INFORMACION', 'Socio modificado con exito')
+                    self.root.destroy()
+                    self.form.actualizarTreeSocios()
+            except Exception as ex:
+                messagebox.showerror('ERROR', 'No se pudo modificar el socio contacte al administrador del sistema')
+                print(ex)
                 self.root.destroy()
                 self.form.actualizarTreeSocios()
 
 
 if __name__ == "__main__":
     ui = Tk()
+    ui.title('ABM Socios')
     app = UISocio(root=ui)
     ui.mainloop()
     exit()
